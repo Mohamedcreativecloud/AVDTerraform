@@ -54,31 +54,32 @@ locals {
   resource_group_name = "example-resource-group"
   location            = "westeurope"
 }
-
-resource "azurerm_resource_group" "example" {
-  name     = local.resource_group_name
-  location = local.location
+resource "random_password" "password" {
+  length           = 16
+  special          = true
+  override_special = "!#$%&*()-_=+[]{}<>:?"
 }
+
 
 resource "azurerm_virtual_network" "example" {
   name                = "example-vnet"
-  location            = local.location
-  resource_group_name = local.resource_group_name
+  location            = var.resource_group_location
+  resource_group_name = var.rg_name
   address_space       = ["10.0.0.0/16"]
 }
 
 resource "azurerm_subnet" "example" {
   name                 = "example-subnet"
-  resource_group_name  = local.resource_group_name
-  virtual_network_name = azurerm_virtual_network.example.name
+  resource_group_name  = var.rg_name
+  virtual_network_name = "test_Vnet"
   address_prefixes     = ["10.0.1.0/24"]
 }
 
 resource "azurerm_network_interface" "example" {
   count               = var.vm_count
   name                = "example-nic-${count.index}"
-  location            = local.location
-  resource_group_name = local.resource_group_name
+  location            = var.resource_group_location
+  resource_group_name = var.rg_name
 
   ip_configuration {
     name                          = "example-ipconfig"
@@ -94,7 +95,7 @@ resource "azurerm_windows_virtual_machine" "example" {
   resource_group_name   = local.resource_group_name
   size                  = var.vm_size
   admin_username        = "adminuser"
-  admin_password        = "P@ssw0rd123!"
+  admin_password        = random_password.password
   network_interface_ids = [azurerm_network_interface.example[count.index].id]
 
   os_disk {
