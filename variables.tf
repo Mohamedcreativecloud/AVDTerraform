@@ -71,7 +71,7 @@ variable "image_version" {
 
 variable "vm_count" {
   description = "Number of Session Host VMs to create"
-  default     = "1"
+  default     = "3"
 }
 
 
@@ -82,6 +82,5 @@ variable "env" {
 
 variable "azurerm_network_interface" {
   description = "NIC"
-
 
 }
