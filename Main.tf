@@ -74,7 +74,7 @@ resource "azurerm_subnet" "example" {
   virtual_network_name = "test_Vnet"
   address_prefixes     = ["10.0.1.0/24"]
 }
-
+#res for netverk
 resource "azurerm_network_interface" "example" {
   count               = var.vm_count
   name                = "example-nic-${count.index}"
