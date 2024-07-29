@@ -84,3 +84,4 @@ variable "azurerm_network_interface" {
   description = "NIC"
 
 }
+// test
