@@ -1,87 +1,57 @@
-variable "resource_group_location" {
-  default     = "westeurope"
-  description = "Location of the resource group."
+variable "resource_group_names" {
+  description = "rg names"
+  type        = list(string)
 }
 
-variable "rg_name" {
+# Location name
+variable "location" {
+  description = "Azure region for deployment"
   type        = string
-  default     = "fw-hostedcf-pox-euw-avd-rg"
-  description = "Name of the Resource group in which to deploy service objects"
 }
 
-variable "workspace" {
-  type        = string
-  description = "Name of the Azure Virtual Desktop workspace"
-  default     = "AVD TF Workspace"
-}
+# Eventhub namespace name
+variable "eventhub_namespace_prefix" {
+  description = "Eventhub namespace prefix"
+  default     = "dev-evh"
 
-variable "hostpool" {
-  type        = string
-  description = "Name of the Azure Virtual Desktop host pool"
-  default     = "AVD-TF-HP"
-}
-
-variable "rfc3339" {
-  type        = string
-  default     = "2023-03-23T07:03:06.519Z"
-  description = "Registration token expiration"
-}
-
-variable "prefix" {
-  type        = string
-  default     = "mvi-dev-001"
-  description = "Prefix of the name of the AVD machine(s)"
-}
-#ID for Hostpool    
-variable "hostpool_id" {
-  type        = string
-  default     = ""
-  description = "This is the hostpool ID"
-}
-
-variable "vm_size" {
-  description = "Specifies the size of the virtual machine."
-  default     = "Standard_D2s_v3"
-}
-
-variable "image_publisher" {
-  description = "Image Publisher"
-  default     = "MicrosoftWindowsDesktop"
-}
-
-variable "vm_image_Type" {
-  description = "VM Gallery"
-  default     = "Gallery"
+  validation {
+    condition     = contains(["dev-evh", "test-evh", "prod-evh"], var.eventhub_namespace_prefix)
+    error_message = "The evh prefix must have the allowed prefix"
+  }
 
 }
-variable "image_offer" {
-  description = "Image Offer"
-  default     = "Windows-11"
-}
 
-variable "image_sku" {
-  description = "Image SKU"
-  default     = "win11-22h2-avd"
-}
+# Eventhub sku
+variable "eventhub_sku" {
+  description = "Name of the eventhub sku"
 
-variable "image_version" {
-  description = "Image Version"
-  default     = "latest"
-}
-
-variable "vm_count" {
-  description = "Number of Session Host VMs to create"
-  default     = "3"
+  validation {
+    condition     = contains(["Standard", "Basic", "Premium", "Dedicated"], var.eventhub_sku)
+    error_message = "Invalid sku, valid sku's are: standard, basic, premium and dedicated. Please use with caution."
+  }
 }
 
 
-variable "env" {
-  description = "hub,prd,tst,dev,qa"
-  default     = "prd"
+# Eventhub properties
+variable "eventhub_capacity" {
+  description = "Throughput capacity of namespace"
+  default     = 1
 }
 
-variable "azurerm_network_interface" {
-  description = "NIC"
+variable "auto_inflate_enabled" {
+  description = "Determines if auto inflate enabled"
+  default     = "false"
 
+  validation {
+    condition     = contains(["true", "false"], var.auto_inflate_enabled)
+    error_message = "Auto inflate must be se to: true or false"
+  }
 }
-// test
+
+variable "maximum_throughput_units" {
+  description = "Maximum throughput units"
+}
+
+variable "zone_redundant" {
+  description = "Determines zone redundancy"
+}
